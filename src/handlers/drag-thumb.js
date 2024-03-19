@@ -71,6 +71,7 @@ function bindMouseScrollHandler(
     removeScrollingClass(i, y);
     i[scrollbarYRail].classList.remove(cls.state.clicking);
     i.event.unbind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+    i.event.unbind(i.ownerDocument, 'touchmove', mouseMoveHandler);
   }
 
   function bindMoves(e, touchMode) {
@@ -85,14 +86,15 @@ function bindMouseScrollHandler(
     if (!touchMode) {
       i.event.bind(i.ownerDocument, 'mousemove', mouseMoveHandler);
       i.event.once(i.ownerDocument, 'mouseup', mouseUpHandler);
-      e.preventDefault();
     } else {
       i.event.bind(i.ownerDocument, 'touchmove', mouseMoveHandler);
+      i.event.once(i.ownerDocument, 'touchend', mouseUpHandler);
     }
 
     i[scrollbarYRail].classList.add(cls.state.clicking);
 
     e.stopPropagation();
+    e.preventDefault();
   }
 
   i.event.bind(i[scrollbarY], 'mousedown', e => {

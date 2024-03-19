@@ -13,13 +13,15 @@ class EventElement {
   }
 
   unbind(eventName, target) {
-    this.handlers[eventName] = this.handlers[eventName].filter(handler => {
-      if (target && handler !== target) {
-        return true;
-      }
-      this.element.removeEventListener(eventName, handler, false);
-      return false;
-    });
+    if( this.handlers[eventName] ){
+      this.handlers[eventName] = this.handlers[eventName].filter(handler => {
+        if (target && handler !== target) {
+          return true;
+        }
+        this.element.removeEventListener(eventName, handler, false);
+        return false;
+      });
+    }
   }
 
   unbindAll() {
