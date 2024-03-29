@@ -8,7 +8,7 @@ const version = require('./package.json').version;
 const banner =
   `/*!
  * perfect-scrollbar v${version}
- * Copyright ${new Date().getFullYear()} Hyunje Jun, MDBootstrap and Contributors
+ * Copyright ${new Date().getFullYear()} Hyunje Jun, McShelby, MDBootstrap and Contributors
  * Licensed under MIT
  */
 `;

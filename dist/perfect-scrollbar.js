@@ -1,6 +1,6 @@
 /*!
- * perfect-scrollbar v1.5.3
- * Copyright 2021 Hyunje Jun, MDBootstrap and Contributors
+ * perfect-scrollbar v1.5.5.McShelby.3
+ * Copyright 2024 Hyunje Jun, McShelby, MDBootstrap and Contributors
  * Licensed under MIT
  */
 
@@ -123,13 +123,15 @@
   EventElement.prototype.unbind = function unbind (eventName, target) {
       var this$1 = this;
 
-    this.handlers[eventName] = this.handlers[eventName].filter(function (handler) {
-      if (target && handler !== target) {
-        return true;
-      }
-      this$1.element.removeEventListener(eventName, handler, false);
-      return false;
-    });
+    if( this.handlers[eventName] ){
+      this.handlers[eventName] = this.handlers[eventName].filter(function (handler) {
+        if (target && handler !== target) {
+          return true;
+        }
+        this$1.element.removeEventListener(eventName, handler, false);
+        return false;
+      });
+    }
   };
 
   EventElement.prototype.unbindAll = function unbindAll () {
@@ -575,6 +577,7 @@
       removeScrollingClass(i, y);
       i[scrollbarYRail].classList.remove(cls.state.clicking);
       i.event.unbind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+      i.event.unbind(i.ownerDocument, 'touchmove', mouseMoveHandler);
     }
 
     function bindMoves(e, touchMode) {
@@ -589,14 +592,15 @@
       if (!touchMode) {
         i.event.bind(i.ownerDocument, 'mousemove', mouseMoveHandler);
         i.event.once(i.ownerDocument, 'mouseup', mouseUpHandler);
-        e.preventDefault();
       } else {
         i.event.bind(i.ownerDocument, 'touchmove', mouseMoveHandler);
+        i.event.once(i.ownerDocument, 'touchend', mouseUpHandler);
       }
 
       i[scrollbarYRail].classList.add(cls.state.clicking);
 
       e.stopPropagation();
+      e.preventDefault();
     }
 
     i.event.bind(i[scrollbarY], 'mousedown', function (e) {
