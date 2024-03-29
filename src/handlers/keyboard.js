@@ -9,35 +9,6 @@ export default function(i) {
   const scrollbarFocused = () =>
     DOM.matches(i.scrollbarX, ':focus') || DOM.matches(i.scrollbarY, ':focus');
 
-  function shouldPreventDefault(deltaX, deltaY) {
-    const scrollTop = Math.floor(element.scrollTop);
-    if (deltaX === 0) {
-      if (!i.scrollbarYActive) {
-        return false;
-      }
-      if (
-        (scrollTop === 0 && deltaY > 0) ||
-        (scrollTop >= i.contentHeight - i.containerHeight && deltaY < 0)
-      ) {
-        return !i.settings.wheelPropagation;
-      }
-    }
-
-    const scrollLeft = element.scrollLeft;
-    if (deltaY === 0) {
-      if (!i.scrollbarXActive) {
-        return false;
-      }
-      if (
-        (scrollLeft === 0 && deltaX < 0) ||
-        (scrollLeft >= i.contentWidth - i.containerWidth && deltaX > 0)
-      ) {
-        return !i.settings.wheelPropagation;
-      }
-    }
-    return true;
-  }
-
   i.event.bind(i.ownerDocument, 'keydown', e => {
     if (
       (e.isDefaultPrevented && e.isDefaultPrevented()) ||
@@ -141,8 +112,6 @@ export default function(i) {
     element.scrollLeft += deltaX;
     updateGeometry(i);
 
-    if (shouldPreventDefault(deltaX, deltaY)) {
-      e.preventDefault();
-    }
+    e.preventDefault();
   });
 }

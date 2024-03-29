@@ -1,5 +1,5 @@
 /*!
- * perfect-scrollbar v1.5.5.McShelby.3
+ * perfect-scrollbar v1.5.5.McShelby.4
  * Copyright 2024 Hyunje Jun, McShelby, MDBootstrap and Contributors
  * Licensed under MIT
  */
@@ -617,35 +617,6 @@
     var elementHovered = function () { return matches(element, ':hover'); };
     var scrollbarFocused = function () { return matches(i.scrollbarX, ':focus') || matches(i.scrollbarY, ':focus'); };
 
-    function shouldPreventDefault(deltaX, deltaY) {
-      var scrollTop = Math.floor(element.scrollTop);
-      if (deltaX === 0) {
-        if (!i.scrollbarYActive) {
-          return false;
-        }
-        if (
-          (scrollTop === 0 && deltaY > 0) ||
-          (scrollTop >= i.contentHeight - i.containerHeight && deltaY < 0)
-        ) {
-          return !i.settings.wheelPropagation;
-        }
-      }
-
-      var scrollLeft = element.scrollLeft;
-      if (deltaY === 0) {
-        if (!i.scrollbarXActive) {
-          return false;
-        }
-        if (
-          (scrollLeft === 0 && deltaX < 0) ||
-          (scrollLeft >= i.contentWidth - i.containerWidth && deltaX > 0)
-        ) {
-          return !i.settings.wheelPropagation;
-        }
-      }
-      return true;
-    }
-
     i.event.bind(i.ownerDocument, 'keydown', function (e) {
       if (
         (e.isDefaultPrevented && e.isDefaultPrevented()) ||
@@ -749,9 +720,7 @@
       element.scrollLeft += deltaX;
       updateGeometry(i);
 
-      if (shouldPreventDefault(deltaX, deltaY)) {
-        e.preventDefault();
-      }
+      e.preventDefault();
     });
   }
 
