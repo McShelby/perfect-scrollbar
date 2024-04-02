@@ -86,6 +86,7 @@ function bindMouseScrollHandler(
     if (!touchMode) {
       i.event.bind(i.ownerDocument, 'mousemove', mouseMoveHandler);
       i.event.once(i.ownerDocument, 'mouseup', mouseUpHandler);
+      e.preventDefault();
     } else {
       i.event.bind(i.ownerDocument, 'touchmove', mouseMoveHandler);
       i.event.once(i.ownerDocument, 'touchend', mouseUpHandler);
@@ -94,7 +95,6 @@ function bindMouseScrollHandler(
     i[scrollbarYRail].classList.add(cls.state.clicking);
 
     e.stopPropagation();
-    e.preventDefault();
   }
 
   i.event.bind(i[scrollbarY], 'mousedown', e => {
