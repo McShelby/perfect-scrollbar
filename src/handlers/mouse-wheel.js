@@ -146,7 +146,9 @@ export default function(i) {
     shouldPrevent = shouldPrevent || shouldPreventDefault(deltaX, deltaY);
     if (shouldPrevent && !e.ctrlKey) {
       e.stopPropagation();
-      e.preventDefault();
+      if (typeof e.cancelable !== "boolean" || e.cancelable) {
+        e.preventDefault();
+      }
     }
   }
 
