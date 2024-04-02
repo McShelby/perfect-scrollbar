@@ -1,5 +1,5 @@
 /*!
- * perfect-scrollbar v1.5.5.McShelby.4
+ * perfect-scrollbar v1.5.5.McShelby.5
  * Copyright 2024 Hyunje Jun, McShelby, MDBootstrap and Contributors
  * Licensed under MIT
  */
@@ -113,7 +113,7 @@ EventElement.prototype.bind = function bind (eventName, handler) {
     this.handlers[eventName] = [];
   }
   this.handlers[eventName].push(handler);
-  this.element.addEventListener(eventName, handler, false);
+  this.element.addEventListener(eventName, handler, {passive: false});
 };
 
 EventElement.prototype.unbind = function unbind (eventName, target) {
@@ -124,7 +124,7 @@ EventElement.prototype.unbind = function unbind (eventName, target) {
       if (target && handler !== target) {
         return true;
       }
-      this$1.element.removeEventListener(eventName, handler, false);
+      this$1.element.removeEventListener(eventName, handler, {passive: false});
       return false;
     });
   }
@@ -565,7 +565,9 @@ function bindMouseScrollHandler(
 
     e.stopPropagation();
     if (e.type.startsWith('touch') && e.changedTouches.length > 1) {
-      e.preventDefault();
+      if (typeof e.cancelable !== "boolean" || e.cancelable) {
+        e.preventDefault();
+      }
     }
   }
 
@@ -588,6 +590,9 @@ function bindMouseScrollHandler(
     if (!touchMode) {
       i.event.bind(i.ownerDocument, 'mousemove', mouseMoveHandler);
       i.event.once(i.ownerDocument, 'mouseup', mouseUpHandler);
+      if (typeof e.cancelable !== "boolean" || e.cancelable) {
+        e.preventDefault();
+      }
     } else {
       i.event.bind(i.ownerDocument, 'touchmove', mouseMoveHandler);
       i.event.once(i.ownerDocument, 'touchend', mouseUpHandler);
@@ -596,7 +601,6 @@ function bindMouseScrollHandler(
     i[scrollbarYRail].classList.add(cls.state.clicking);
 
     e.stopPropagation();
-    e.preventDefault();
   }
 
   i.event.bind(i[scrollbarY], 'mousedown', function (e) {
@@ -612,6 +616,35 @@ function keyboard(i) {
 
   var elementHovered = function () { return matches(element, ':hover'); };
   var scrollbarFocused = function () { return matches(i.scrollbarX, ':focus') || matches(i.scrollbarY, ':focus'); };
+
+  function shouldPreventDefault(deltaX, deltaY) {
+    var scrollTop = Math.floor(element.scrollTop);
+    if (deltaX === 0) {
+      if (!i.scrollbarYActive) {
+        return false;
+      }
+      if (
+        (scrollTop === 0 && deltaY > 0) ||
+        (scrollTop >= i.contentHeight - i.containerHeight && deltaY < 0)
+      ) {
+        return !i.settings.wheelPropagation;
+      }
+    }
+
+    var scrollLeft = element.scrollLeft;
+    if (deltaY === 0) {
+      if (!i.scrollbarXActive) {
+        return false;
+      }
+      if (
+        (scrollLeft === 0 && deltaX < 0) ||
+        (scrollLeft >= i.contentWidth - i.containerWidth && deltaX > 0)
+      ) {
+        return !i.settings.wheelPropagation;
+      }
+    }
+    return true;
+  }
 
   i.event.bind(i.ownerDocument, 'keydown', function (e) {
     if (
@@ -716,7 +749,11 @@ function keyboard(i) {
     element.scrollLeft += deltaX;
     updateGeometry(i);
 
-    e.preventDefault();
+    if (shouldPreventDefault(deltaX, deltaY)) {
+      if (typeof e.cancelable !== "boolean" || e.cancelable) {
+        e.preventDefault();
+      }
+    }
   });
 }
 
@@ -863,7 +900,9 @@ function wheel(i) {
     shouldPrevent = shouldPrevent || shouldPreventDefault(deltaX, deltaY);
     if (shouldPrevent && !e.ctrlKey) {
       e.stopPropagation();
-      e.preventDefault();
+      if (typeof e.cancelable !== "boolean" || e.cancelable) {
+        e.preventDefault();
+      }
     }
   }
 
@@ -1037,7 +1076,9 @@ function touch(i) {
       }
 
       if (shouldPrevent(differenceX, differenceY)) {
-        e.preventDefault();
+        if (typeof e.cancelable !== "boolean" || e.cancelable) {
+          e.preventDefault();
+        }
       }
     }
   }
